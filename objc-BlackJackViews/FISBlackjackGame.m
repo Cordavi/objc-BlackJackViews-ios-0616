@@ -9,17 +9,30 @@
 #import "FISBlackjackGame.h"
 #import "FISCard.h"
 
+@interface FISBlackjackGame ()
+@property (nonatomic) NSUserDefaults *defaults;
+@end
+
 @implementation FISBlackjackGame
 
 - (instancetype)init {
     self = [super init];
     if (self) {
         _deck = [[FISCardDeck alloc] init];
-        _house = [[FISBlackjackPlayer alloc] initWithName:@"House"];
-        _player = [[FISBlackjackPlayer alloc] initWithName:@"Player"];
+        _house = [[FISBlackjackPlayer alloc] initWithName:@"House" Wins:[self.defaults integerForKey:@"HouseWins"] Losses:[self.defaults integerForKey:@"HouseLosses"]];
+        _player = [[FISBlackjackPlayer alloc] initWithName:@"Player" Wins:[self.defaults integerForKey:@"PlayerWins"] Losses:[self.defaults integerForKey:@"PlayerLosses"]];
     }
     return self;
 }
+
+- (void)setWinsLossesDefaults {
+    [self.defaults setInteger:self.player.wins forKey:@"PlayerWins"];
+    [self.defaults setInteger:self.player.losses forKey:@"PlayerLosses"];
+    [self.defaults setInteger:self.house.wins forKey:@"HouseWins"];
+    [self.defaults setInteger:self.house.losses forKey:@"HouseLosses"];
+    [self.defaults synchronize];
+}
+
 
 - (void)playBlackjack {
     [self.deck resetDeck];

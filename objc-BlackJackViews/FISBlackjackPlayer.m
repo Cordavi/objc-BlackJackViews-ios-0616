@@ -11,17 +11,17 @@
 @implementation FISBlackjackPlayer
 
 - (instancetype)init {
-    return [self initWithName:@""];
+    return [self initWithName:@"" Wins:0 Losses:0];
 }
 
-- (instancetype)initWithName:(NSString *)name {
+- (instancetype)initWithName:(NSString *)name Wins:(NSInteger)wins Losses:(NSInteger)losses{
     self = [super init];
     if (self) {
         _name = name;
         _cardsInHand = [@[] mutableCopy];
         _handscore = 0;
-        _wins = 0;
-        _losses = 0;
+        _wins = wins;
+        _losses = losses;
         _aceInHand = NO;
         _blackjack = NO;
         _busted = NO;

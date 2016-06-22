@@ -44,6 +44,8 @@
 
 @property (strong, nonatomic) NSArray *cardLabels;
 
+@property (nonatomic) NSUserDefaults *defaults;
+
 
 @end
 
@@ -74,6 +76,7 @@
     [self.game dealNewRound];
     [self resetCardText];
     [self resetGameBoardLabels];
+    [self resetPlayerButtons];
 }
 
 - (void)resetGameBoardLabels {
@@ -90,130 +93,131 @@
     }
 }
 
+- (void)resetPlayerButtons {
+    [self enableButtons:NO];
+}
+
 ///////////////
 
 - (IBAction)dealTapped:(id)sender {
     [self resetGame];
-    [self showNewGameCards];
-    [self updatePlayerScore:self.game.player.handscore];
-    
-    if (self.game.player.blackjack == NO && self.game.house.blackjack == NO) {
-        self.hitButton.enabled = YES;
-        self.stayButton.enabled = YES;
-    } else {
-        [self checkForWin];
+    [self setNewRoundCards];
+    [self checkForWinOnDeal];
+    [self updateGameLabels];
+}
+
+- (void)setNewRoundCards {
+    self.playerFirstCardLabel.text = [self.game.player.cardsInHand[0] cardLabel];
+    self.playerSecondCardLabel.text = [self.game.player.cardsInHand[1] cardLabel];
+    self.houseFirstCardLabel.text = @"❂";
+    self.houseSecondCardLabel.text = [self.game.house.cardsInHand[1] cardLabel];
+    [self showPlayedCards];
+    [self updatePlayerScore];
+}
+
+- (void)showPlayedCards {
+    for (UILabel *cardLabel in self.beginNewGameCardLabels) {
+        cardLabel.hidden = NO;
     }
 }
 
-- (void)showNewGameCards {
-    self.playerFirstCardLabel.text = [self.game.player.cardsInHand[0] cardLabel];
-    self.playerFirstCardLabel.hidden = NO;
-    self.playerSecondCardLabel.text = [self.game.player.cardsInHand[1] cardLabel];
-    self.playerSecondCardLabel.hidden = NO;
-    self.houseFirstCardLabel.text = @"❂";
-    self.houseFirstCardLabel.hidden = NO;
-    self.houseSecondCardLabel.text = [self.game.house.cardsInHand[1] cardLabel];
-    self.houseSecondCardLabel.hidden = NO;
+- (void)updatePlayerScore {
+    self.playerScoreLabel.text = [NSString stringWithFormat:@"%lu", self.game.player.handscore];
 }
 
 ////////////////
 
-- (void)updatePlayerScore:(NSUInteger)score {
-    self.playerScoreLabel.text = [NSString stringWithFormat:@"%lu", score];
-    
-}
-
-- (void)updateHouseScore:(NSUInteger)score {
-    self.houseScoreLabel.text = [NSString stringWithFormat:@"%lu", score];
-    
-}
-
 - (void)updateGameLabels {
-    
     if (self.game.player.blackjack) {
         self.playerBlackjackLabel.hidden = NO;
-    }
-    
-    if (self.game.house.blackjack) {
-        self.houseBlackjackLabel.hidden = NO;
-    }
-    
-    if (self.game.player.busted) {
+    } else if (self.game.player.busted) {
         self.playerBustedLabel.hidden = NO;
+    } else if (self.game.player.stayed) {
+        self.playerStayedLabel.hidden = NO;
     }
     
     if (self.game.house.busted) {
         self.houseBustedLabel.hidden = NO;
-    }
-    
-    if (self.game.player.stayed) {
-        self.playerStayedLabel.hidden = NO;
-    }
-    
-    if (self.game.house.stayed) {
+    } else if (self.game.house.stayed) {
         self.houseStayedLabel.hidden = NO;
     }
 }
 
-- (BOOL)checkForWin{
-    if (self.game.player.busted || self.game.player.stayed || self.game.house.busted || self.game.house.stayed) {
-        [self.game incrementWinsAndLossesForHouseWins:[self.game houseWins]];
-        self.playerWinsLabel.text = [NSString stringWithFormat:@"Wins: %lu", self.game.player.wins];
-        self.playerLossesLabel.text = [NSString stringWithFormat:@"Losses: %lu", self.game.player.losses];
-        self.houseWinsLabel.text = [NSString stringWithFormat:@"Wins: %lu", self.game.house.wins];
-        self.houseLossesLabel.text = [NSString stringWithFormat:@"Losses: %lu", self.game.house.losses];
-        [self updatePlayerScore:self.game.player.handscore];
-        [self updateHouseScore:self.game.house.handscore];
-        self.houseScoreLabel.hidden = NO;
-        if ([self.game houseWins]) {
-            self.winLossLabel.text = @"You lost!";
-            self.winLossLabel.hidden = NO;
-        } else {
-            self.winLossLabel.text = @"You win!";
-            self.winLossLabel.hidden = NO;
-        }
-        self.dealButton.enabled = YES;
-        return YES;
+- (void)checkForWinOnDeal {
+    if (self.game.player.handscore == 21 && self.game.house.handscore == 21) {
+        self.winLossLabel.text = @"Push!";
+    } else if (self.game.player.handscore == 21) {
+        self.winLossLabel.text = @"You win!";
+        self.winLossLabel.hidden = NO;
+    } else if (self.game.player.busted == YES) {
+        self.winLossLabel.text = @"You lost!";
+        self.winLossLabel.hidden = NO;
+        [self enableButtons:NO];
     }
-    return NO;
+    else {
+        [self enableButtons:YES];
+    }
+}
+
+- (void)setGameWinLabel; {
+    if ([self.game houseWins]) {
+        self.winLossLabel.text = @"You lost!";
+        self.winLossLabel.hidden = NO;
+    } else {
+        self.winLossLabel.text = @"You win!";
+        self.winLossLabel.hidden = NO;
+    }
+}
+
+- (void)revealHouseHand {
+    self.houseScoreLabel.text = [NSString stringWithFormat:@"%lu", self.game.house.handscore];
+    self.houseScoreLabel.hidden = NO;
+    self.houseFirstCardLabel.text = [self.game.house.cardsInHand[0] cardLabel];
+}
+
+- (void)updateScores {
+    [self.game incrementWinsAndLossesForHouseWins:[self.game houseWins]];
+    self.playerWinsLabel.text = [NSString stringWithFormat:@"Wins: %lu", self.game.player.wins];
+    self.playerLossesLabel.text = [NSString stringWithFormat:@"Losses: %lu", self.game.player.losses];
+    self.houseWinsLabel.text = [NSString stringWithFormat:@"Wins: %lu", self.game.house.wins];
+    self.houseLossesLabel.text = [NSString stringWithFormat:@"Losses: %lu", self.game.house.losses];
+    [self.game setWinsLossesDefaults];
+}
+
+- (void)roundEnd {
+    [self setGameWinLabel];
+    [self revealHouseHand];
+    [self updateScores];
 }
 
 - (void)housePlay {
-    //house determines if to play
-    if ([self.game processHouseTurn]) {
-        [self showDealtCard:[self.game dealCardToHouse] CardLabels:self.cardLabels[1]];
-    }
-    
-    //update house score
-    [self updateHouseScore:self.game.house.handscore];
-    //check for win or bust
-    if (![self checkForWin]) {
-        if (self.game.player.stayed) {
-            [self.game processHouseTurn];
+    while ([self.game.house.cardsInHand count] < 5) {
+        if ([self.game processHouseTurn]) {
+            [self showDealtCard:[self.game dealCardToHouse] CardLabels:self.cardLabels[1]];
+        } else if (![self.game processHouseTurn]) {
+            [self updateGameLabels];
+            break;
         }
     }
-    [self updateGameLabels];
+    [self roundEnd];
+}
+
+- (void)enableButtons:(BOOL)buttonState {
+    self.hitButton.enabled = buttonState;
+    self.stayButton.enabled = buttonState;
 }
 
 - (IBAction)playerHitTapped:(id)sender {
-    //deal card to player and updates board
     [self showDealtCard:[self.game dealCardToPlayer] CardLabels:self.cardLabels[0]];
+    [self updatePlayerScore];
+    [self checkForWinOnDeal];
+    [self updateGameLabels];
     
-    //update player score
-    [self updatePlayerScore:self.game.player.handscore];
-    //check for win or bust
-    if (![self checkForWin]) {
-        [self housePlay];
-    } else {
-        //update game labels
-        [self updateGameLabels];
-    }
 }
 
 - (IBAction)playerStayTapped:(id)sender {
     self.game.player.stayed = YES;
-    self.hitButton.enabled = NO;
-    self.stayButton.enabled = NO;
+    [self enableButtons:NO];
     [self housePlay];
 }
 

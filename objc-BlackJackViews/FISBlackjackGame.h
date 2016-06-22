@@ -25,5 +25,6 @@
 - (BOOL)processHouseTurn;
 - (BOOL)houseWins;
 - (void)incrementWinsAndLossesForHouseWins:(BOOL)houseWins;
+- (void)setWinsLossesDefaults;
 
 @end

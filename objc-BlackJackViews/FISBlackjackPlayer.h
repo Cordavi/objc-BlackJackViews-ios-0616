@@ -18,11 +18,12 @@
 @property (nonatomic) BOOL busted;
 @property (nonatomic) BOOL stayed;
 @property (nonatomic) NSUInteger handscore;
-@property (nonatomic) NSUInteger wins;
-@property (nonatomic) NSUInteger losses;
+@property (nonatomic) NSInteger wins;
+@property (nonatomic) NSInteger losses;
+
 
 - (instancetype)init;
-- (instancetype)initWithName:(NSString *)name;
+- (instancetype)initWithName:(NSString *)name Wins:(NSInteger)wins Losses:(NSInteger)losses;
 - (void)resetForNewGame;
 - (void)acceptCard:(FISCard *)card;
 - (BOOL)shouldHit;
