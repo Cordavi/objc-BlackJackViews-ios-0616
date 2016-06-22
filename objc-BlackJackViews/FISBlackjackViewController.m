@@ -21,26 +21,29 @@
 @property (weak, nonatomic) IBOutlet UILabel *houseFourthCardLabel;
 @property (weak, nonatomic) IBOutlet UILabel *houseFifthCardLabel;
 
-@property (weak, nonatomic) IBOutlet UILabel *playerStayedLabel;
 @property (weak, nonatomic) IBOutlet UILabel *playerScoreLabel;
 @property (weak, nonatomic) IBOutlet UILabel *playerWinsLabel;
 @property (weak, nonatomic) IBOutlet UILabel *playerLossesLabel;
 @property (weak, nonatomic) IBOutlet UILabel *playerBustedLabel;
 @property (weak, nonatomic) IBOutlet UILabel *playerBlackjackLabel;
+@property (weak, nonatomic) IBOutlet UILabel *playerStayedLabel;
 @property (weak, nonatomic) IBOutlet UILabel *playerFirstCardLabel;
 @property (weak, nonatomic) IBOutlet UILabel *playerSecondCardLabel;
 @property (weak, nonatomic) IBOutlet UILabel *playerThirdCardLabel;
 @property (weak, nonatomic) IBOutlet UILabel *playerFourthCardLabel;
 @property (weak, nonatomic) IBOutlet UILabel *playerFifthCardLabel;
 
-@property (weak, nonatomic) IBOutlet UILabel *winLossLabel;
+@property (strong, nonatomic) IBOutletCollection(UILabel) NSArray *gameBoardLabels;
+@property (strong, nonatomic) IBOutletCollection(UILabel) NSArray *beginNewGameCardLabels;
 
-@property (strong, nonatomic) NSArray *playerCardLabels;
-@property (strong, nonatomic) NSArray *houseCardLabels;
+@property (weak, nonatomic) IBOutlet UILabel *winLossLabel;
 
 @property (weak, nonatomic) IBOutlet UIButton *dealButton;
 @property (weak, nonatomic) IBOutlet UIButton *hitButton;
 @property (weak, nonatomic) IBOutlet UIButton *stayButton;
+
+@property (strong, nonatomic) NSArray *cardLabels;
+
 
 @end
 
@@ -48,43 +51,17 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self resetLabels];
+    self.cardLabels = @[@[self.playerFirstCardLabel,
+                          self.playerSecondCardLabel,
+                          self.playerThirdCardLabel,
+                          self.playerFourthCardLabel,
+                          self.playerFifthCardLabel],
+                        @[self.houseFirstCardLabel,
+                          self.houseSecondCardLabel,
+                          self.houseThirdCardLabel,
+                          self.houseFourthCardLabel,
+                          self.houseFifthCardLabel]];
     [self resetGame];
-}
-
-- (void)resetGame {
-    self.playerCardLabels = @[self.playerFirstCardLabel,
-                              self.playerSecondCardLabel,
-                              self.playerThirdCardLabel,
-                              self.playerFourthCardLabel,
-                              self.playerFifthCardLabel];
-    
-    self.houseCardLabels = @[self.houseFirstCardLabel,
-                             self.houseSecondCardLabel,
-                             self.houseThirdCardLabel,
-                             self.houseFourthCardLabel,
-                             self.houseFifthCardLabel];
-    
-    [self hideShowCardLabels:self.playerCardLabels];
-    [self hideShowCardLabels:self.houseCardLabels];
-    
-    self.houseBustedLabel.hidden = YES;
-    self.houseStayedLabel.hidden = YES;
-    self.houseBlackjackLabel.hidden = YES;
-    self.playerBustedLabel.hidden = YES;
-    self.playerStayedLabel.hidden = YES;
-    self.playerBlackjackLabel.hidden = YES;
-    self.winLossLabel.hidden = YES;
-    self.houseScoreLabel.hidden = YES;
-}
-
--(void)resetLabels {
-    for (UILabel *cardLabel in self.playerCardLabels) {
-        cardLabel.text = @"";
-    }
-    for (UILabel *cardLabel in self.houseCardLabels) {
-        cardLabel.text = @"";
-    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -92,46 +69,54 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)hideShowCardLabels:(NSArray *)cardLabels {
-    for (UILabel *cardLabel in cardLabels) {
-        if (!([cardLabel.text length] == 0)) {
-            cardLabel.hidden = NO;
-        } else {
-            cardLabel.hidden = YES;
+- (void)resetGame {
+    self.game = [[FISBlackjackGame alloc] init];
+    [self.game dealNewRound];
+    [self resetCardText];
+    [self resetGameBoardLabels];
+}
+
+- (void)resetGameBoardLabels {
+    for (UILabel *boardLabel in self.gameBoardLabels) {
+        boardLabel.hidden = YES;
+    }
+}
+
+- (void)resetCardText {
+    for (NSArray *playerCards in self.cardLabels) {
+        for (UILabel *cardLabel in playerCards) {
+            cardLabel.text = @"";
         }
     }
 }
 
-- (void)setCardLabelsWithCards:(FISBlackjackPlayer *)player CardLabels:(NSArray *)cardLabels  {
-    for (FISCard *card in player.cardsInHand) {
-        for (UILabel *cardLabelToSet in cardLabels) {
-            if ([card.cardLabel isEqualToString:cardLabelToSet.text]) {
-                break;
-            }
-            if ([cardLabelToSet.text length] == 0) {
-                cardLabelToSet.text = card.cardLabel;
-                break;
-            }
-        }
-    }
-    [self hideShowCardLabels:cardLabels];
-    
-}
+///////////////
 
 - (IBAction)dealTapped:(id)sender {
     [self resetGame];
-    [self resetLabels];
-    self.game = [[FISBlackjackGame alloc] init];
-    [self.game dealNewRound];
-    [self setCardLabelsWithCards:self.game.player CardLabels:self.playerCardLabels];
-    [self setCardLabelsWithCards:self.game.house CardLabels:self.houseCardLabels];
-    if ([self.game houseWins]) {
+    [self showNewGameCards];
+    [self updatePlayerScore:self.game.player.handscore];
+    
+    if (self.game.player.blackjack == NO && self.game.house.blackjack == NO) {
+        self.hitButton.enabled = YES;
+        self.stayButton.enabled = YES;
+    } else {
         [self checkForWin];
     }
-    self.hitButton.enabled = YES;
-    self.stayButton.enabled = YES;
-    [self updatePlayerScore:self.game.player.handscore];
 }
+
+- (void)showNewGameCards {
+    self.playerFirstCardLabel.text = [self.game.player.cardsInHand[0] cardLabel];
+    self.playerFirstCardLabel.hidden = NO;
+    self.playerSecondCardLabel.text = [self.game.player.cardsInHand[1] cardLabel];
+    self.playerSecondCardLabel.hidden = NO;
+    self.houseFirstCardLabel.text = @"❂";
+    self.houseFirstCardLabel.hidden = NO;
+    self.houseSecondCardLabel.text = [self.game.house.cardsInHand[1] cardLabel];
+    self.houseSecondCardLabel.hidden = NO;
+}
+
+////////////////
 
 - (void)updatePlayerScore:(NSUInteger)score {
     self.playerScoreLabel.text = [NSString stringWithFormat:@"%lu", score];
@@ -195,9 +180,10 @@
 
 - (void)housePlay {
     //house determines if to play
-    [self.game processHouseTurn];
-    //update cards show on board
-    [self setCardLabelsWithCards:self.game.house CardLabels:self.houseCardLabels];
+    if ([self.game processHouseTurn]) {
+        [self showDealtCard:[self.game dealCardToHouse] CardLabels:self.cardLabels[1]];
+    }
+    
     //update house score
     [self updateHouseScore:self.game.house.handscore];
     //check for win or bust
@@ -210,10 +196,9 @@
 }
 
 - (IBAction)playerHitTapped:(id)sender {
-    //deal card to player
-    [self.game dealCardToPlayer];
-    //update cards shown on board
-    [self setCardLabelsWithCards:self.game.player CardLabels:self.playerCardLabels];
+    //deal card to player and updates board
+    [self showDealtCard:[self.game dealCardToPlayer] CardLabels:self.cardLabels[0]];
+    
     //update player score
     [self updatePlayerScore:self.game.player.handscore];
     //check for win or bust
@@ -230,6 +215,16 @@
     self.hitButton.enabled = NO;
     self.stayButton.enabled = NO;
     [self housePlay];
+}
+
+- (void)showDealtCard:(FISCard *)card CardLabels:(NSArray *)cardLabels {
+    for (UILabel *cardLabel in cardLabels) {
+        if ([cardLabel.text length] == 0) {
+            cardLabel.text = card.cardLabel;
+            cardLabel.hidden = NO;
+            break;
+        }
+    }
 }
 
 

@@ -50,13 +50,6 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Stayed" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bK6-Tk-d0e" userLabel="houseStayed">
-                                <rect key="frame" x="334" y="123" width="53" height="21"/>
-                                <accessibility key="accessibilityConfiguration" label="houseStayed"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MB7-5b-QZM" userLabel="houseCard1">
                                 <rect key="frame" x="20" y="208" width="60" height="80"/>
                                 <color key="backgroundColor" red="0.0" green="0.50196081399917603" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -238,6 +231,13 @@
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Stayed" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bK6-Tk-d0e" userLabel="houseStayed">
+                                <rect key="frame" x="334" y="123" width="53" height="21"/>
+                                <accessibility key="accessibilityConfiguration" label="houseStayed"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
@@ -269,6 +269,28 @@
                         <outlet property="playerWinsLabel" destination="xqU-dA-iHc" id="ode-9F-6wX"/>
                         <outlet property="stayButton" destination="dzP-D7-yWZ" id="QSO-kf-Ozf"/>
                         <outlet property="winLossLabel" destination="AFS-sU-bay" id="H2G-ep-MG2"/>
+                        <outletCollection property="gameBoardLabels" destination="o2I-uD-oQl" id="q9F-il-ztY"/>
+                        <outletCollection property="gameBoardLabels" destination="pW6-R2-I3W" id="8ZI-0E-xo8"/>
+                        <outletCollection property="gameBoardLabels" destination="bK6-Tk-d0e" id="fQL-Iz-dRv"/>
+                        <outletCollection property="gameBoardLabels" destination="IIA-Ew-rRc" id="hW5-iF-Gzt"/>
+                        <outletCollection property="gameBoardLabels" destination="TmX-OF-3CS" id="2hr-cU-HeE"/>
+                        <outletCollection property="gameBoardLabels" destination="R89-KL-eMU" id="iyt-OH-mLm"/>
+                        <outletCollection property="gameBoardLabels" destination="WgU-EH-8FL" id="3v5-Ye-6PJ"/>
+                        <outletCollection property="gameBoardLabels" destination="AFS-sU-bay" id="8G4-VZ-pAE"/>
+                        <outletCollection property="gameBoardLabels" destination="gCE-db-huL" id="Cf8-ZE-xFR"/>
+                        <outletCollection property="gameBoardLabels" destination="utf-7Z-CIB" id="ciD-GH-DeK"/>
+                        <outletCollection property="gameBoardLabels" destination="kcx-GU-KeG" id="mLj-MA-jkk"/>
+                        <outletCollection property="gameBoardLabels" destination="E5c-72-u9U" id="5ux-4y-mrI"/>
+                        <outletCollection property="gameBoardLabels" destination="Yv3-zq-Crv" id="o5W-WI-lUY"/>
+                        <outletCollection property="gameBoardLabels" destination="Ye3-Hg-JNH" id="AkI-dU-MDr"/>
+                        <outletCollection property="gameBoardLabels" destination="fl4-1V-860" id="mGo-y1-X29"/>
+                        <outletCollection property="gameBoardLabels" destination="nXQ-iJ-OuQ" id="DIR-h7-hsL"/>
+                        <outletCollection property="gameBoardLabels" destination="urs-V1-hLW" id="krh-WJ-iwN"/>
+                        <outletCollection property="gameBoardLabels" destination="MB7-5b-QZM" id="8C9-r8-nsy"/>
+                        <outletCollection property="beginNewGameCardLabels" destination="MB7-5b-QZM" id="3Mn-bP-8kL"/>
+                        <outletCollection property="beginNewGameCardLabels" destination="urs-V1-hLW" id="LON-DQ-KJg"/>
+                        <outletCollection property="beginNewGameCardLabels" destination="E5c-72-u9U" id="bd5-rD-u00"/>
+                        <outletCollection property="beginNewGameCardLabels" destination="Yv3-zq-Crv" id="Ge8-FL-aXo"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VwO-ay-0xR" userLabel="First Responder" sceneMemberID="firstResponder"/>

@@ -55,13 +55,17 @@
     
 }
 
-- (void)dealCardToPlayer {
-    [self.player acceptCard:[self.deck drawNextCard]];
+- (FISCard *)dealCardToPlayer {
+    FISCard *cardDealt = [self.deck drawNextCard];
+    [self.player acceptCard:cardDealt];
+    return cardDealt;
     
 }
 
-- (void)dealCardToHouse {
-    [self.house acceptCard:[self.deck drawNextCard]];
+- (FISCard *)dealCardToHouse {
+    FISCard *cardDealt = [self.deck drawNextCard];
+    [self.house acceptCard:cardDealt];
+    return cardDealt;
     
 }
 
@@ -71,10 +75,11 @@
     }
 }
 
-- (void)processHouseTurn {
+- (BOOL)processHouseTurn {
     if ([self.house shouldHit] && !(self.house.stayed) && !(self.house.busted)) {
-        [self dealCardToHouse];
+        return YES;
     }
+    return NO;
 }
 
 - (BOOL)houseWins {

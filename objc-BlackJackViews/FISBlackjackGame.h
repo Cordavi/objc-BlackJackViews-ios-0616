@@ -19,10 +19,10 @@
 - (instancetype)init;
 - (void)playBlackjack;
 - (void)dealNewRound;
-- (void)dealCardToPlayer;
-- (void)dealCardToHouse;
+- (FISCard *)dealCardToPlayer;
+- (FISCard *)dealCardToHouse;
 - (void)processPlayerTurn;
-- (void)processHouseTurn;
+- (BOOL)processHouseTurn;
 - (BOOL)houseWins;
 - (void)incrementWinsAndLossesForHouseWins:(BOOL)houseWins;
 
